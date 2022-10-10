@@ -35,7 +35,13 @@ end
 
 --Returns an rgb color based on a curve between v and max
 function determine_color(v, max)
-    return {1, 1, 1}
+    local x = v/max
+
+    local r = x
+    local g = math.exp(-5*(x-.5)^2)
+    local b = 1 - x
+
+    return {r, g, b}
 end
 
 --Updates image data based on the global params
