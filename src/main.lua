@@ -2,7 +2,7 @@
 require 'mandlebrot'
 
 --Eventually add a slider to handle iterations cap, otherwise we just do this
-MAX_ITERATIONS = 40
+MAX_ITERATIONS = 75
 THRESHHOLD = 2
 
 RENDER_WIDTH, RENDER_HEIGHT = 512, 512
@@ -11,8 +11,6 @@ RENDER_WIDTH, RENDER_HEIGHT = 512, 512
 GRAPH_BOUNDS = { -2.25, 1.75, -2, 2 }
 
 ZOOM_FACTOR = 2
-
-
 
 function love.load()
     love.window.setMode(RENDER_WIDTH, RENDER_HEIGHT)
@@ -29,11 +27,25 @@ end
 function love.mousepressed(x, y, button)
     if button == 1 then
         --Update bounds based on mouse position
+        local center_x = GRAPH_BOUNDS[1] + (x / RENDER_WIDTH)*(GRAPH_BOUNDS[2]-GRAPH_BOUNDS[1])
+        local center_y = GRAPH_BOUNDS[3] + (y / RENDER_HEIGHT)*(GRAPH_BOUNDS[4]-GRAPH_BOUNDS[3])
+
+        local new_w = (GRAPH_BOUNDS[2]-GRAPH_BOUNDS[1])/ZOOM_FACTOR
+        local new_h = (GRAPH_BOUNDS[4]-GRAPH_BOUNDS[3])/ZOOM_FACTOR
+
+        GRAPH_BOUNDS = {
+            center_x - new_w/2,
+            center_x + new_w/2,
+            center_y - new_h/2,
+            center_y + new_h/2
+        }
         --Rerender the set
+        update_image_data()
     end
 end
 
 --Returns an rgb color based on a curve between v and max
+--Calculating for every pixel might be overly slow, maybe try pre-stored color values/curve
 function determine_color(v, max)
     local x = v/max
 
