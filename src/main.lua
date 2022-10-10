@@ -2,14 +2,18 @@
 require 'mandlebrot'
 
 --Eventually add a slider to handle iterations cap, otherwise we just do this
+--Alternativly, do something with coroutines to slowly increment number of iterations across the whole image
 MAX_ITERATIONS = 75
+--Defines the point at which a series is considered to be diverged
 THRESHHOLD = 2
 
 RENDER_WIDTH, RENDER_HEIGHT = 512, 512
 
+--The bounds of the graph in complex space
 --{xmin, xmax, ymin, ymax}
 GRAPH_BOUNDS = { -2.25, 1.75, -2, 2 }
 
+--The amount by which the zoom increases on each click
 ZOOM_FACTOR = 2
 
 function love.load()
@@ -17,16 +21,21 @@ function love.load()
     image_data = love.image.newImageData(RENDER_WIDTH, RENDER_HEIGHT)
     image = love.graphics.newImage(image_data)
 
+
+    local s = os.clock()
     update_image_data()
+    local e = os.clock()
+
+    print(e-s)
 end
 
 function love.draw()
     love.graphics.draw(image)
 end
 
+--Update bounds based on mouse position
 function love.mousepressed(x, y, button)
     if button == 1 then
-        --Update bounds based on mouse position
         local center_x = GRAPH_BOUNDS[1] + (x / RENDER_WIDTH)*(GRAPH_BOUNDS[2]-GRAPH_BOUNDS[1])
         local center_y = GRAPH_BOUNDS[3] + (y / RENDER_HEIGHT)*(GRAPH_BOUNDS[4]-GRAPH_BOUNDS[3])
 

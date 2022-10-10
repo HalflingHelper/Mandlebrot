@@ -8,11 +8,11 @@ function Complex.new(x, y)
     return comp
 end
 
-Complex.mt.__add = function(x, y)
+Complex.add = function(x, y)
     return Complex.new(x.a + y.a, x.b + y.b)
 end
 
-Complex.mt.__mult = function(x, y)
+Complex.mult = function(x, y)
     return Complex.new(x.a*y.a - x.b*y.b, x.a*y.b + x.b*y.a)
 end
 
