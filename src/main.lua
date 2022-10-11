@@ -62,8 +62,10 @@ function determine_color(v, max)
     local x = v / max
 
     local r = x
-    local g = math.exp(-5 * (x - .5) ^ 2)
-    local b = 1 - x
+    -- local g = math.exp(-5 * (x - .5) ^ 2)
+    --Cheaper version of the exponential
+    local g = - math.abs(1*x-1)+1
+    local b = 1 - .5*x
 
     return { r, g, b }
 end
