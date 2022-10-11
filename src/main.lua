@@ -3,7 +3,7 @@ require 'mandlebrot'
 
 --Eventually add a slider to handle iterations cap, otherwise we just do this
 --Alternativly, do something with coroutines to slowly increment number of iterations across the whole image
-MAX_ITERATIONS = 100
+MAX_ITERATIONS = 50
 --Defines the point at which a series is considered to be diverged
 THRESHHOLD = 2
 
@@ -22,7 +22,7 @@ function love.load()
     image = love.graphics.newImage(image_data)
 
     local time = 0
-    local m = 100
+    local m = 150
     for i = 1, m do
         local s = os.clock()
         update_image_data()
