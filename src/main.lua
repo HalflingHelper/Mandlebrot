@@ -1,15 +1,15 @@
 --Main file to combine all the other files and interface the the Love2d API
+--Import actual mandlebrot file
 require 'mandlebrot'
 
---Eventually add a slider to handle iterations cap, otherwise we just do this
---Alternativly, do something with coroutines to slowly increment number of iterations across the whole image
-MAX_ITERATIONS = 50
---Defines the point at which a series is considered to be diverged
+--Maybe do something with coroutines to slowly increment number of iterations across the whole image
+MAX_ITERATIONS = 100
+--Defines the point at which a series is considered to have diverged
 THRESHHOLD = 2
 
 RENDER_WIDTH, RENDER_HEIGHT = 512, 512
 
---The bounds of the graph in complex space
+--The bounds of the graph in complex space, this is a good initial viewing window for the mandlebrot set
 --{xmin, xmax, ymin, ymax}
 GRAPH_BOUNDS = { -2.25, 1.75, -2, 2 }
 
@@ -21,15 +21,8 @@ function love.load()
     image_data = love.image.newImageData(RENDER_WIDTH, RENDER_HEIGHT)
     image = love.graphics.newImage(image_data)
 
-    local time = 0
-    local m = 150
-    for i = 1, m do
-        local s = os.clock()
-        update_image_data()
-        local e = os.clock()
-        time = time + e - s
-    end
-    print(time / m)
+    --Generate initial image
+    update_image_data()
 end
 
 function love.draw()
@@ -57,15 +50,15 @@ function love.mousepressed(x, y, button)
 end
 
 --Returns an rgb color based on a curve between v and max
---Calculating for every pixel might be overly slow, maybe try pre-stored color values/curve
-function determine_color(v, max)
+--I reallky want this to look better, I need to play with the color curves
+function get_color(v, max)
     local x = v / max
 
-    local r = x
+    local r = x / 2
     -- local g = math.exp(-5 * (x - .5) ^ 2)
     --Cheaper version of the exponential
-    local g = - math.abs(1*x-1)+1
-    local b = 1 - .5*x
+    local g = -math.abs(1 * (x - .75)) + 1
+    local b = 1 - .5 * x
 
     return { r, g, b }
 end
@@ -85,14 +78,15 @@ function update_image_data()
             cy = cy + dcy
             local d = Eval_Mandlebrot(cx, cy)
 
+            -- image_data:setPixel(x, y, d==-1 and {0, 0, 0} or get_color(d, MAX_ITERATIONS), 1)
             if (d == -1) then
                 --It's black
                 image_data:setPixel(x, y, 0, 0, 0, 0)
             else
-                image_data:setPixel(x, y, determine_color(d, MAX_ITERATIONS), 1)
+                image_data:setPixel(x, y, get_color(d, MAX_ITERATIONS), 1)
             end
         end
     end
-
+    --Write the image data to the image
     image:replacePixels(image_data)
 end

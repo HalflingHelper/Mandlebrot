@@ -6,6 +6,7 @@ local mult = function(x, y)
     return {x[1]*y[1] - x[2]*y[2], x[1]*y[2] + x[2]*y[1]}
 end
 
+--Returns the distance of a complex number c from the origin in the complex plane
 local abs = function(c)
     return math.sqrt(c[1]^2 + c[2]^2)
 end
@@ -35,6 +36,25 @@ function Eval_Mandlebrot(x, y)
     end
 
     if abs({zx, zy}) > THRESHHOLD then
+        return i
+    end
+
+    return -1
+end
+
+function Eval_Julia(x, y)
+    --c = {a, b} - Some constants that determine what the set looks like
+    --z = {x, y, 0}
+    --Defining a fixed c for the julia set
+    local a, b = -.75, .11
+    local i = 0
+
+    while i < MAX_ITERATIONS and abs({x, y}) <= THRESHHOLD do
+        x, y =  man_fn_2(x, y, a, b)
+        i = i + 1
+    end
+
+    if abs({x, y}) > THRESHHOLD then
         return i
     end
 
